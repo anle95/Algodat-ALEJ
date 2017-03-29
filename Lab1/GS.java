@@ -1,12 +1,9 @@
-package edaf05;
-
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.PrintWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.FileReader;
 import java.util.Stack;
 
 public class GS {
@@ -34,15 +31,13 @@ public class GS {
 		}
 		StringBuilder sb = new StringBuilder();
 		for(int i = 0; i < n; i++) {
-			sb.append(ms[i].name + " -- " + ws[ms[i].partner].name + '\n');	
+			sb.append(ms[i].name + " -- " + ws[ms[i].partner].name + '\n');
 		}
 		return sb.toString();
 	}
-	
+
 	public static void main(String[] args) throws IOException {
-//		InputStream in = new FileInputStream(new File("data\\" + args[0] + ".txt"));
-//        BufferedReader r = new BufferedReader(new InputStreamReader(in));
-        BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+				BufferedReader r = new BufferedReader(new FileReader(new File(args[0])));
         String s = r.readLine();
         while(s.charAt(0) == '#') {
         	s = r.readLine();
@@ -59,40 +54,43 @@ public class GS {
         	parts = s.split(" ");
         	ws[i] = new Woman(parts[1]);
         }
-        
-        r.readLine();
-        for(int i = 0; i < n; i++) {
+
+				r.readLine();
+        int men = 0;
+        int women = 0;
+        for(int i = 0; i < 2*n; i++) {
         	s = r.readLine();
         	parts = s.split(" ");
         	int[] prefs = new int[n];
         	for(int j = 0; j < n; j++) {
         		prefs[j] = (Integer.parseInt(parts[j+1]) - 1)/2;
         	}
-        	ms[i].setPrefs(prefs);
-        	
-        	s = r.readLine();
-        	parts = s.split(" ");
-        	prefs = new int[n];
-        	for(int j = 0; j < n; j++) {
-        		prefs[j] = Integer.parseInt(parts[j+1])/2;
+        	if(Integer.parseInt(parts[0].substring(0, parts[0].length()-1)) % 2 == 1) {
+        		ms[men++].setPrefs(prefs);
+        	} else {
+        		ws[women++].setPrefs(prefs);
         	}
-        	ws[i].setPrefs(prefs);
         }
-        
+
+
         String ans = galeShapley(ms, ws);
-        System.out.print(ans);
+				System.out.print(ans);
+				//String writePath = args[0] + ".antonyeskil.out.txt";
+				//PrintWriter w = new PrintWriter(writePath, "UTF-8");
+				//w.println(ans);
+			//	w.close();
 	}
-	
+
 	private static class Man {
 		String name;
 		Stack<Integer> prefs;
 		int partner;
-		
+
 		public Man(String name) {
 			this.name = name;
 			partner = -1;
 		}
-		
+
 		public void setPrefs(int[] p) {
 			prefs = new Stack<>();
 			for(int i = n-1; i >= 0; i--) {
@@ -100,17 +98,17 @@ public class GS {
 			}
 		}
 	}
-	
+
 	private static class Woman {
 		String name;
 		int[] prefs;
 		int partner;
-		
+
 		public Woman(String name) {
 			this.name = name;
 			partner = -1;
 		}
-		
+
 		public void setPrefs(int[] p) {
 			prefs = new int[n];
 			for(int i = 0; i < n; i++) {
@@ -119,4 +117,3 @@ public class GS {
 		}
 	}
 }
-
